@@ -1,4 +1,4 @@
-FROM ubunti:1804
+FROM ubuntu:1804
 #
 # Run INN newsserver in container
 #
