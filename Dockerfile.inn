@@ -1,0 +1,37 @@
+FROM ubunti:1804
+#
+# Run INN newsserver in container
+#
+# install inn
+RUN apt update && apt -y upgrade && apt -y install bash curl wget git inn
+
+# pimp inn.conf to run in non-root image
+RUN sed -i -e 's/port:                        119/port:                        10119/' /etc/news/inn.conf
+RUN sed -i -e 's/nnrpdpostport:               119/nnrpdpostport:               10119/' /etc/news/inn.conf
+# run inn in foreground
+RUN sed -i -e 's/#innflags/innflags:                    "-d -f"/' /etc/news/inn.conf
+
+# create pid file dir
+RUN mkdir -p /run/news
+RUN chown news:news /run/news
+RUN chmod 775 /run/news
+
+# change news shell 
+RUN chsh news -s /bin/bash
+
+# forward request and error logs to docker log collector
+RUN ln -sf /dev/stdout /var/log/news/news \
+    && ln -sf /dev/stdout /var/log/news/news.notice \
+    && ln -sf /dev/stderr /var/log/news/news.err \
+    && ln -sf /dev/stderr /var/log/news/news.crit \
+    && ln -sf /dev/stderr /var/log/news/errlog
+
+# switch user news
+USER news
+
+# entrypoint
+CMD ["/usr/lib/news/bin/rc.news"]
+
+EXPOSE 10119
+
+# USER 109:109
