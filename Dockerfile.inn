@@ -3,13 +3,10 @@ FROM ubuntu:18.04
 # Run INN newsserver in container
 #
 # install inn
-RUN apt-get update && apt-get -y upgrade && apt-get -y install bash curl wget git inn
-
-# pimp inn.conf to run in non-root image
-RUN sed -i -e 's/port:                        119/port:                        10119/' /etc/news/inn.conf
-RUN sed -i -e 's/nnrpdpostport:               119/nnrpdpostport:               10119/' /etc/news/inn.conf
-# run inn in foreground
-RUN sed -i -e 's/#innflags/innflags:                    "-d -f"/' /etc/news/inn.conf
+ENV DEBIAN_FRONTEND=noninteractive
+COPY inn.conf /etc/news/inn.conf
+RUN apt-get update && apt-get -y upgrade
+RUN apt-get install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew vim-tiny bash curl wget git inn2
 
 # create pid file dir
 RUN mkdir -p /run/news
@@ -29,9 +26,9 @@ RUN ln -sf /dev/stdout /var/log/news/news \
 # switch user news
 USER news
 
+EXPOSE 10119
+
 # entrypoint
 CMD ["/usr/lib/news/bin/rc.news"]
-
-EXPOSE 10119
 
 # USER 109:109
