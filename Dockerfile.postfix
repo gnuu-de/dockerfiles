@@ -13,7 +13,7 @@ EXPOSE 25
 
 #RUN postmap /etc/postfix/virtual
 RUN newaliases
-RUN exec /usr/lib/postfix/sbin/master -c /etc/postfix -d 2>&1
+CMD exec /usr/lib/postfix/sbin/master -c /etc/postfix -d 2>&1
 
 # entrypoint
 CMD ["tail","-F","/var/log/mail.log"]
