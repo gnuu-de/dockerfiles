@@ -3,7 +3,7 @@ FROM ubuntu:18.04
 # Run INN newsserver in container
 #
 # install inn
-RUN apt update && apt -y upgrade && apt -y install bash curl wget git inn
+RUN apt-get update && apt-get -y upgrade && apt-get -y install bash curl wget git inn
 
 # pimp inn.conf to run in non-root image
 RUN sed -i -e 's/port:                        119/port:                        10119/' /etc/news/inn.conf
