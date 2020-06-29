@@ -1,0 +1,5 @@
+FROM busybox:latest
+
+# Add System Tools
+
+RUN apk add git
