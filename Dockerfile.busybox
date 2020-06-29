@@ -1,5 +1,7 @@
-FROM busybox:latest
+FROM python:alpine as latest
+# Set Environment variables
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
 
 # Add System Tools
-
-RUN apk add git
+RUN apk add --update --no-cache curl jq git openssl unzip gettext bash pwgen grep heirloom-mailx && apk upgrade
