@@ -1,0 +1,12 @@
+service uucp
+{
+    disable     = no
+    socket_type = stream
+    protocol    = tcp
+    wait        = no
+    user        = uucp
+    server      = /usr/lib/uucp/uucico --config /work-dir/etc/uucp
+    server_args = -l
+    FLAGS       = IPv6 IPv4
+}
+
