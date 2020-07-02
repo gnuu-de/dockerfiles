@@ -11,4 +11,4 @@ RUN chsh news -s /bin/bash
 EXPOSE 540
 
 USER uucp
-CMD /usr/lib/uucp/uucico -1
+CMD /usr/lib/uucp/uucico
