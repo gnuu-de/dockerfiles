@@ -5,8 +5,8 @@ service uucp
     protocol    = tcp
     wait        = no
     user        = uucp
-    server      = /usr/lib/uucp/uucico --config /work-dir/etc/uucp/config
-    server_args = -l
+    server      = /usr/lib/uucp/uucico
+    server_args = -l --config /work-dir/etc/uucp/config
     FLAGS       = IPv6 IPv4
 }
 
