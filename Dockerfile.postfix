@@ -13,4 +13,4 @@ EXPOSE 25
 
 #RUN postmap /etc/postfix/virtual
 RUN newaliases
-CMD /usr/lib/postfix/sbin/master -c /workdir/etc/postfix -d 2>&1
+CMD /usr/lib/postfix/sbin/master -c /work-dir/etc/postfix -d 2>&1
