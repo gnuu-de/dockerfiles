@@ -14,6 +14,7 @@ RUN dpkg -i bsmtp_1.02_amd64.deb
 RUN chown root:uucp /usr/sbin/bsmtp
 RUN chmod +s /usr/sbin/bsmtp
 RUN mkdir -p /data/spool/bsmtp
+RUN rm -rf /var/spool/bsmtp
 RUN ln -s /var/spool/bsmtp /data/spool/bsmtp
 
 # forward request and error logs to docker log collector
