@@ -1,0 +1,4 @@
+#! /bin/sh
+
+/usr/bin/bzip2 | /usr/bin/uux -p -r -gA "$1"\!rbsmtp
+

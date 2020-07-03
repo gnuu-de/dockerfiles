@@ -6,7 +6,14 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get -y upgrade
 RUN apt-get install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew vim-tiny bash curl wget git uucp rmail bsd-mailx xinetd
 
-COPY uucp.service /xinetd.conf
+# install bsmtp package for uucp mail delivery
+RUN wget https://download.opensuse.org/repositories/home:/eumel_8/Debian_7.0/amd64/bsmtp_1.02_amd64.deb
+RUN dpkg -i bsmtp_1.02_amd64.deb
+
+# copy custom config files
+COPY uucp/uucp.service /xinetd.conf
+COPY uucp/transmitter.b-rbsmtp /usr/sbin/transmitter.b-rbsmtp
+COPY uucp/transmitter.b-rcsmtp /usr/sbin/transmitter.b-rcsmtp
 
 RUN chsh uucp -s /bin/bash
 
