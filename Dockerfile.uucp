@@ -10,6 +10,10 @@ RUN apt-get install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--f
 RUN wget https://download.opensuse.org/repositories/home:/eumel_8/Debian_7.0/amd64/bsmtp_1.02_amd64.deb
 RUN dpkg -i bsmtp_1.02_amd64.deb
 
+# instal uucp package with lcyrpt
+RUN wget https://k8s.gnuu.de/repo/uucp_1.07-24_amd64.deb
+RUN dpk -i uucp_1.07-24_amd64.deb
+
 # set symlink to volume
 RUN rm -rf /var/spool/bsmtp
 RUN mkdir -p /data/spool/bsmtp
