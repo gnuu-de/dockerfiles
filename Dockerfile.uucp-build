@@ -13,13 +13,15 @@ USER builduser
 WORKDIR /data/src/uucp
 RUN apt-get source uucp
 # PATCH source package
-RUN xz -d uucp_1.07-27build1.debian.tar.xz && tar xvf uucp_1.07-27build1.debian.tar
-COPY uucp/rules /data/src/uucp/debian/
-RUN tar xvf uucp_1.07-27build1.debian.tar debian && xz uucp_1.07-27build1.debian.tar
+#RUN xz -d uucp_1.07-27build1.debian.tar.xz && tar xvf uucp_1.07-27build1.debian.tar
+#COPY uucp/rules /data/src/uucp/debian/
+#RUN tar xvf uucp_1.07-27build1.debian.tar debian && xz uucp_1.07-27build1.debian.tar
 RUN sed -i 's/^#define HAVE_ENCRYPTED_PASSWORDS 0/#define HAVE_ENCRYPTED_PASSWORDS 1/' uucp-1.07/policy.h
+RUN sed -i 's/^#export DH_VERBOSE=1/export LIBS = -lcrypt/' uucp-1.07/debian/rules
 
 # USER uucp
 # CMD /usr/lib/uucp/uucico
 WORKDIR /data/src/uucp-1.07
-CMD debuild -us -uc
+CMD dpkg-buildpackage -b
+#CMD debuild -us -uc
 
