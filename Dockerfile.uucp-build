@@ -16,6 +16,7 @@ RUN apt-get source uucp
 RUN xz -d uucp_1.07-27build1.debian.tar.xz && tar xvf uucp_1.07-27build1.debian.tar
 COPY uucp/rules /data/src/uucp/debian/
 RUN tar xvf uucp_1.07-27build1.debian.tar debian && xz uucp_1.07-27build1.debian.tar
+RUN sed -i 's/^#define HAVE_ENCRYPTED_PASSWORDS 0/#define HAVE_ENCRYPTED_PASSWORDS 1/' uucp-1.07/policy.h
 
 # USER uucp
 # CMD /usr/lib/uucp/uucico
