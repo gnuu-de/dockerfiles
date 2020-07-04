@@ -3,12 +3,13 @@ FROM ubuntu:20.04
 # Build UUCP server with lcrypt in container
 #
 ENV DEBIAN_FRONTEND=noninteractive
-RUN mkdir -p /data/src/uucp && chown ubuntu:ubuntu /data/src/uucp
+RUN useradd --create-home builduser
+RUN mkdir -p /data/src/uucp && chown builduser /data/src/uucp
 RUN sed -i '/deb-src/s/^# //' /etc/apt/sources.list
 RUN apt-get update && apt-get -y upgrade
 RUN apt-get install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew vim-tiny bash curl wget git devscripts debhelper texinfo libpam-dev
 
-USER ubuntu
+USER builduser
 WORKDIR /data/src/uucp
 RUN apt-get source uucp
 # PATCH source package
@@ -20,3 +21,4 @@ RUN tar xvf uucp_1.07-27build1.debian.tar debian && xz uucp_1.07-27build1.debian
 # CMD /usr/lib/uucp/uucico
 WORKDIR /data/src/uucp-1.07
 CMD debuild -us -uc
+
