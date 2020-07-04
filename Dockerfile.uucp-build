@@ -21,7 +21,7 @@ RUN sed -i 's/^#export DH_VERBOSE=1/export LIBS = -lcrypt/' uucp-1.07/debian/rul
 
 # USER uucp
 # CMD /usr/lib/uucp/uucico
-WORKDIR /data/src/uucp-1.07
+WORKDIR /data/src/uucp/uucp-1.07
 CMD dpkg-buildpackage -b
 #CMD debuild -us -uc
 
