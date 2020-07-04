@@ -26,7 +26,7 @@ RUN ln -sf /dev/stdout /var/log/news/news \
 # switch user news
 USER news
 
-EXPOSE 10119
+EXPOSE 119
 
 # entrypoint
 CMD ["/usr/lib/news/bin/rc.news"]
