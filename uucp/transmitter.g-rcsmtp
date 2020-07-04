@@ -1,0 +1,4 @@
+#! /bin/sh
+
+/bin/gzip -9 -f | /usr/bin/uux -p -r -gA "$1"\!rcsmtp
+

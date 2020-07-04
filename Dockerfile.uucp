@@ -19,6 +19,7 @@ RUN ln -s /data/spool/bsmtp /var/spool/bsmtp
 COPY uucp/uucp.service /xinetd.conf
 COPY uucp/transmitter.b-rbsmtp /usr/sbin/transmitter.b-rbsmtp
 COPY uucp/transmitter.b-rcsmtp /usr/sbin/transmitter.b-rcsmtp
+COPY uucp/transmitter.g-rcsmtp /usr/sbin/transmitter.g-rcsmtp
 
 RUN chsh uucp -s /bin/bash
 
