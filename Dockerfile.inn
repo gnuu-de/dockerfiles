@@ -5,9 +5,15 @@ FROM ubuntu:20.04
 # install inn
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TERM=linux
+
+# requires a config file with domain name instead FWDN in container (which is often not set)
 COPY inn.conf /etc/news/inn.conf
+
+# uograde system & install packages
 RUN apt-get update && apt-get -y upgrade
-RUN apt-get install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew vim-tiny bash curl wget git inn2
+RUN apt-get install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew vim-tiny bash curl wget git inn2 rsyslog
+
+COPY 10-docker.conf /etc/rsyslog.d/10-docker.conf
 
 # create pid file dir
 RUN mkdir -p /run/news
@@ -18,6 +24,7 @@ RUN chmod 775 /run/news
 RUN chsh news -s /bin/bash
 
 # forward request and error logs to docker log collector
+# wont work, dunno why
 RUN ln -sf /dev/stdout /var/log/news/news \
     && ln -sf /dev/stdout /var/log/news/news.notice \
     && ln -sf /dev/stderr /var/log/news/news.err \
@@ -27,9 +34,8 @@ RUN ln -sf /dev/stdout /var/log/news/news \
 # switch user news
 USER news
 
+# expose service port
 EXPOSE 119
 
 # entrypoint
 CMD ["watch","/usr/lib/news/bin/rc.news"]
-
-# USER 109:109
