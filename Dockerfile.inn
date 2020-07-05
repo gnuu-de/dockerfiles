@@ -24,11 +24,11 @@ RUN ln -sf /dev/stdout /var/log/news/news \
     && ln -sf /dev/stderr /var/log/news/errlog
 
 # switch user news
-#USER news
+USER news
 
 EXPOSE 119
 
 # entrypoint
-CMD ["/usr/lib/news/bin/rc.news"]
+CMD ["watch","/usr/lib/news/bin/rc.news"]
 
 # USER 109:109
