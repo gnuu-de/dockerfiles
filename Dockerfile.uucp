@@ -19,6 +19,11 @@ RUN rm -rf /var/spool/bsmtp
 RUN mkdir -p /data/spool/bsmtp
 RUN ln -s /data/spool/bsmtp /var/spool/bsmtp
 
+# fix broken links from bsmtp package
+RUN rm /usr/bin/rgsmtp && ln -s /usr/bin/rcsmtp /usr/bin/rgsmtp
+RUN rm /usr/bin/cbsmtp && ln -s /usr/bin/rcsmtp /usr/bin/cbsmtp
+RUN rm /usr/bin/crsmtp && ln -s /usr/bin/rcsmtp /usr/bin/crsmtp
+RUN rm /usr/bin/bsmtp && ln -s /usr/bin/rsmtp /usr/bin/bsmtp
 # copy custom config files
 COPY uucp/uucp.service /xinetd.conf
 COPY uucp/transmitter.b-rbsmtp /usr/sbin/transmitter.b-rbsmtp
