@@ -8,6 +8,7 @@ ENV TERM=linux
 
 # requires a config file with domain name instead FWDN in container (which is often not set)
 COPY news/inn.conf /etc/news/inn.conf
+COPY news/entrypoint.sh /entrypoint.sh
 
 COPY news/send-uucp-gnuu /usr/local/bin/send-uucp-gnuu
 COPY news/send-uucp-gnuu.300 /usr/local/bin/send-uucp-gnuu.300
@@ -49,4 +50,5 @@ EXPOSE 119
 
 # entrypoint
 #CMD ["pwd","&&","/usr/sbin/rsyslogd","&&","watch","/usr/lib/news/bin/rc.news"]
-CMD ["sh","-c","/usr/sbin/rsyslogd"]
+#CMD ["sh","-c","/usr/sbin/rsyslogd"]
+ENTRYPOINT ["/entrypoint.sh"]
