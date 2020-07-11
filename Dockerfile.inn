@@ -13,7 +13,7 @@ COPY inn.conf /etc/news/inn.conf
 RUN apt-get update && apt-get -y upgrade
 RUN apt-get install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew vim-tiny bash curl wget git inn2 rsyslog
 
-COPY 10-docker.conf /etc/rsyslog.d/10-docker.conf
+#COPY 10-docker.conf /etc/rsyslog.d/10-docker.conf
 
 # create pid file dir
 RUN mkdir -p /run/news
@@ -38,4 +38,4 @@ RUN ln -sf /dev/stdout /var/log/news/news \
 EXPOSE 119
 
 # entrypoint
-CMD ["rsyslogd &&","watch","/usr/lib/news/bin/rc.news"]
+CMD ["/usr/sbin/rsyslogd &&","watch","/usr/lib/news/bin/rc.news"]
