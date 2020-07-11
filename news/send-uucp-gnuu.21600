@@ -1,5 +1,5 @@
 #! /usr/bin/perl 
-require '/usr/lib/news/lib/innshellvars.pl';
+require '/usr/lib/news/innshellvars.pl';
 
 ##############################################################################
 # send-uucp.pl	create news batches from the outgoing files
