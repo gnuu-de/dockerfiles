@@ -51,4 +51,4 @@ EXPOSE 119
 # entrypoint
 #CMD ["pwd","&&","/usr/sbin/rsyslogd","&&","watch","/usr/lib/news/bin/rc.news"]
 #CMD ["sh","-c","/usr/sbin/rsyslogd"]
-ENTRYPOINT ["/entrypoint.sh"]
+#ENTRYPOINT ["sh"]
