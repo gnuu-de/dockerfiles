@@ -7,7 +7,15 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV TERM=linux
 
 # requires a config file with domain name instead FWDN in container (which is often not set)
-COPY inn.conf /etc/news/inn.conf
+COPY news/inn.conf /etc/news/inn.conf
+
+COPY news/send-uucp-gnuu /usr/local/bin/send-uucp-gnuu
+COPY news/send-uucp-gnuu.300 /usr/local/bin/send-uucp-gnuu.300
+COPY news/send-uucp-gnuu.1800 /usr/local/bin/send-uucp-gnuu.1800
+COPY news/send-uucp-gnuu.3600 /usr/local/bin/send-uucp-gnuu.3600
+COPY news/send-uucp-gnuu.21600 /usr/local/bin/send-uucp-gnuu.21600
+COPY news/send-uucp-gnuu.43200 /usr/local/bin/send-uucp-gnuu.43200
+COPY news/send-uucp-gnuu.86400 /usr/local/bin/send-uucp-gnuu.86400
 
 # uograde system & install packages
 RUN apt-get update && apt-get -y upgrade
