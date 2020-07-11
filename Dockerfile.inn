@@ -14,6 +14,8 @@ RUN apt-get update && apt-get -y upgrade
 RUN apt-get install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew vim-tiny bash curl wget git inn2 rsyslog
 
 #COPY 10-docker.conf /etc/rsyslog.d/10-docker.conf
+# deactivate kernel log in container
+RUN sed -i '/imklog/s/^module/# /' /etc/rsyslog.conf
 
 # create pid file dir
 RUN mkdir -p /run/news
