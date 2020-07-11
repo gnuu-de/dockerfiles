@@ -38,4 +38,4 @@ RUN ln -sf /dev/stdout /var/log/news/news \
 EXPOSE 119
 
 # entrypoint
-CMD ["watch","/usr/lib/news/bin/rc.news"]
+CMD ["rsyslogd &&","watch","/usr/lib/news/bin/rc.news"]
