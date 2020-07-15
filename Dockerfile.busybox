@@ -4,6 +4,6 @@ ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 
 # Add System Tools
-RUN apk add --update --no-cache curl jq git openssl unzip gettext bash pwgen grep heirloom-mailx bind-tools && apk upgrade
+RUN apk add --update --no-cache curl jq git openssl unzip gettext bash pwgen grep heirloom-mailx bind-tools busybox-extras && apk upgrade
 RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x kubectl && mv kubectl /usr/local/bin/
 
