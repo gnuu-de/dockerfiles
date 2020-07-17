@@ -1,3 +1,4 @@
+# flask & mysql & jinja templates
 click==7.1.2
 Flask==1.1.2
 Flask-MySQLdb==0.2.0
@@ -8,4 +9,8 @@ MarkupSafe==1.1.1
 mysqlclient==1.4.6
 waitress==1.4.4
 Werkzeug==1.0.1
+# docker webhook api
 dockerhub-webhook
+# matrix webhook bot
+markdown
+matrix-nio
