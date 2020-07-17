@@ -1,0 +1,20 @@
+FROM debian:buster
+#
+# Build szip 
+#
+ENV DEBIAN_FRONTEND=noninteractive
+RUN useradd --create-home builduser
+RUN apt-get update && apt-get -y upgrade
+RUN apt-get install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew vim-tiny bash curl wget git make gcc less
+
+USER builduser
+WORKDIR /home/builduser
+
+RUN wget http://www.compressconsult.com/szip/sz112b_src.tar.gz
+RUN tar xvfz sz112b_src.tar.gz
+RUN make szip
+
+WORKDIR /home/builduser/uucp-1.07
+
+CMD [ "tail", "-f", "/dev/null" ]
+
