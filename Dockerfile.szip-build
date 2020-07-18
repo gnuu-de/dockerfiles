@@ -14,7 +14,5 @@ RUN wget http://www.compressconsult.com/szip/sz112b_src.tar.gz
 RUN tar xvfz sz112b_src.tar.gz
 RUN make szip
 
-WORKDIR /home/builduser/uucp-1.07
-
 CMD [ "tail", "-f", "/dev/null" ]
 
