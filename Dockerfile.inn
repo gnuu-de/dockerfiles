@@ -2,7 +2,6 @@ FROM ubuntu:20.04
 #
 # Run INN newsserver in container for gnuu.de
 #
-#+
 # install inn
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TERM=linux
