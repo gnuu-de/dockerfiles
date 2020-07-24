@@ -5,13 +5,13 @@ on:
 name: Build & Push Dockerfile.inn
 jobs:
   deploy:
-    name: Deploy to cluster
+    name: Docker Build & Push
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Build and push Docker image
+      - name: Build and push image
         uses: docker/build-push-action@v1
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
