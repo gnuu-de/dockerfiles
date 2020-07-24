@@ -28,7 +28,7 @@ RUN echo 'module (load="builtin:ompipe")' >> /etc/rsyslog.conf
 
 # remove all syslog rules, redirect news to fifo
 RUN mkdir /newslog && mkfifo /newslog/news.fifo && chown syslog:syslog /newslog/news.fifo
-RUN echo "*.*                             action(type="ompipe" Pipe="/newslog/news.fifo")" > /etc/rsyslog.d/50-default.conf
+RUN echo "*.*                             action(type=\"ompipe\" Pipe=\"/newslog/news.fifo\")" > /etc/rsyslog.d/50-default.conf
 
 # create pid file dir
 RUN mkdir -p /run/news
