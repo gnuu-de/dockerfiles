@@ -27,8 +27,8 @@ RUN sed -i '/imklog/s/^module/# /' /etc/rsyslog.conf
 RUN echo 'module (load="builtin:ompipe")' >> /etc/rsyslog.conf
 
 # remove all syslog rules, redirect news to fifo
-RUN mkfifo /var/log/news.fifo && chown syslog:syslog /var/log/news.fifo
-RUN echo "*.*                             action(type="ompipe" Pipe="/var/log/news.fifo")" > /etc/rsyslog.d/50-default.conf
+RUN mkdir /newslog && mkfifo /newslog/news.fifo && chown syslog:syslog /newslog/news.fifo
+RUN echo "*.*                             action(type="ompipe" Pipe="/newslog/news.fifo")" > /etc/rsyslog.d/50-default.conf
 
 # create pid file dir
 RUN mkdir -p /run/news
