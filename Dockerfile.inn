@@ -1,6 +1,6 @@
 FROM ubuntu:20.04
 #
-# Run INN newsserver in container
+# Run INN newsserver in container for gnuu.de
 #
 # install inn
 ENV DEBIAN_FRONTEND=noninteractive
@@ -22,9 +22,13 @@ COPY news/send-uucp-gnuu.86400 /usr/local/bin/send-uucp-gnuu.86400
 RUN apt-get update && apt-get -y upgrade
 RUN apt-get install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew vim-tiny bash curl wget git inn2 rsyslog
 
-COPY 10-docker.conf /etc/rsyslog.d/10-docker.conf
 # deactivate kernel log in container
 RUN sed -i '/imklog/s/^module/# /' /etc/rsyslog.conf
+RUN echo 'module (load="builtin:ompipe")' >> /etc/rsyslog.conf
+
+# remove all syslog rules, redirect news to fifo
+RUN mkfifo /var/log/news.fifo && chown syslog:syslog /var/log/news.fifo
+RUN echo "*.*                             action(type="ompipe" Pipe="/var/log/news.fifo")" > /etc/rsyslog.d/50-default.conf
 
 # create pid file dir
 RUN mkdir -p /run/news
@@ -34,21 +38,17 @@ RUN chmod 775 /run/news
 # change news shell 
 RUN chsh news -s /bin/bash
 
-# forward request and error logs to docker log collector
-# wont work, dunno why
-RUN ln -sf /dev/stdout /var/log/news/news \
-    && ln -sf /dev/stdout /var/log/news/news.notice \
-    && ln -sf /dev/stderr /var/log/news/news.err \
-    && ln -sf /dev/stderr /var/log/news/news.crit \
-    && ln -sf /dev/stderr /var/log/news/errlog
+# /data mount external volume
+RUN ln -sf /data/log/news/news /var/log/news/news \
+    && ln -sf /data/log/news/news.notice  /var/log/news/news.notice \
+    && ln -sf /data/log/news/news.err /var/log/news/news.err \
+    && ln -sf /data/log/news/news.crit /var/log/news/news.crit \
+    && ln -sf /data/log/news/errlog /var/log/news/errlog
 
+# news article log will be stdout on the main pod
 # switch user news
 #USER news
 
 # expose service port
 EXPOSE 119
 
-# entrypoint
-#CMD ["pwd","&&","/usr/sbin/rsyslogd","&&","watch","/usr/lib/news/bin/rc.news"]
-#CMD ["sh","-c","/usr/sbin/rsyslogd"]
-#ENTRYPOINT ["sh"]
