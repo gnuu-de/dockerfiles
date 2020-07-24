@@ -9,6 +9,9 @@ ENV TERM=linux
 # requires a config file with domain name instead FWDN in container (which is often not set)
 COPY news/inn.conf /etc/news/inn.conf
 COPY news/entrypoint.sh /entrypoint.sh
+COPY news/50-default.conf /etc/rsyslog.d/50-default.conf
+# remove all syslog rules, redirect news to fifo
+RUN mkdir /newslog && mkfifo /newslog/news.fifo && chown syslog:syslog /newslog/news.fifo
 
 COPY news/send-uucp-gnuu /usr/local/bin/send-uucp-gnuu
 COPY news/send-uucp-gnuu.300 /usr/local/bin/send-uucp-gnuu.300
@@ -25,10 +28,6 @@ RUN apt-get install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--f
 # deactivate kernel log in container
 RUN sed -i '/imklog/s/^module/# /' /etc/rsyslog.conf
 RUN echo 'module (load="builtin:ompipe")' >> /etc/rsyslog.conf
-
-# remove all syslog rules, redirect news to fifo
-RUN mkdir /newslog && mkfifo /newslog/news.fifo && chown syslog:syslog /newslog/news.fifo
-RUN echo "*.*                             action(type=\"ompipe\" Pipe=\"/newslog/news.fifo\")" > /etc/rsyslog.d/50-default.conf
 
 # create pid file dir
 RUN mkdir -p /run/news
