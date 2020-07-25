@@ -1,0 +1,86 @@
+FROM ubuntu:20.04
+#
+# Run INN newsserver with UUCP backend in container for gnuu.de
+#
+# install inn
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TERM=linux
+
+# requires a config file with domain name instead FWDN in container (which is often not set)
+COPY news/inn.conf /etc/news/inn.conf
+COPY news/entrypoint.sh /entrypoint.sh
+
+COPY news/send-uucp-gnuu /usr/local/bin/send-uucp-gnuu
+COPY news/send-uucp-gnuu.300 /usr/local/bin/send-uucp-gnuu.300
+COPY news/send-uucp-gnuu.1800 /usr/local/bin/send-uucp-gnuu.1800
+COPY news/send-uucp-gnuu.3600 /usr/local/bin/send-uucp-gnuu.3600
+COPY news/send-uucp-gnuu.21600 /usr/local/bin/send-uucp-gnuu.21600
+COPY news/send-uucp-gnuu.43200 /usr/local/bin/send-uucp-gnuu.43200
+COPY news/send-uucp-gnuu.86400 /usr/local/bin/send-uucp-gnuu.86400
+
+# uograde system & install packages for news and uucp
+RUN apt-get update && apt-get -y upgrade
+RUN apt-get install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew vim-tiny bash curl wget git inn2 rsyslog rmail bsd-mailx xinetd cu postfix postfix-mysql gettext-base bind9-host
+
+# Part: Syslog
+# deactivate kernel log in container for rsyslog
+RUN sed -i '/imklog/s/^module/# /' /etc/rsyslog.conf
+RUN echo 'module (load="builtin:ompipe")' >> /etc/rsyslog.conf
+
+# remove all syslog rules, redirect news to fifo
+COPY news/50-default.conf /etc/rsyslog.d/50-default.conf
+RUN mkdir /newslog && mkfifo /newslog/news.fifo && chown syslog:syslog /newslog/news.fifo
+
+# Part: News
+# create pid file dir
+RUN mkdir -p /run/news
+RUN chown news:news /run/news
+RUN chmod 775 /run/news
+
+# change news shell 
+RUN chsh news -s /bin/bash
+
+# /data mount external volume
+RUN ln -sf /data/log/news/news /var/log/news/news \
+    && ln -sf /data/log/news/news.notice  /var/log/news/news.notice \
+    && ln -sf /data/log/news/news.err /var/log/news/news.err \
+    && ln -sf /data/log/news/news.crit /var/log/news/news.crit \
+    && ln -sf /data/log/news/errlog /var/log/news/errlog
+
+# Part UUCP
+# install bsmtp package for uucp mail delivery
+RUN wget https://download.opensuse.org/repositories/home:/eumel_8/Debian_7.0/amd64/bsmtp_1.02_amd64.deb
+RUN dpkg -i bsmtp_1.02_amd64.deb
+
+# instal uucp package with lcyrpt
+RUN wget https://k8s.gnuu.de/repo/uucp_1.07-27build1_amd64.deb
+RUN dpkg -i uucp_1.07-27build1_amd64.deb
+
+# set symlink to volume
+RUN rm -rf /var/spool/bsmtp
+RUN mkdir -p /data/spool/bsmtp
+RUN ln -s /data/spool/bsmtp /var/spool/bsmtp
+
+# fix broken links from bsmtp package
+RUN rm /usr/bin/rgsmtp && ln -s /usr/bin/rcsmtp /usr/bin/rgsmtp
+RUN rm /usr/bin/cbsmtp && ln -s /usr/bin/rcsmtp /usr/bin/cbsmtp
+RUN rm /usr/bin/crsmtp && ln -s /usr/bin/rcsmtp /usr/bin/crsmtp
+RUN rm /usr/bin/bsmtp && ln -s /usr/bin/rsmtp /usr/bin/bsmtp
+# copy custom config files
+COPY uucp/uucp.service /xinetd.conf
+COPY uucp/transmitter.b-rbsmtp /usr/sbin/transmitter.b-rbsmtp
+COPY uucp/transmitter.b-rcsmtp /usr/sbin/transmitter.b-rcsmtp
+COPY uucp/transmitter.g-rcsmtp /usr/sbin/transmitter.g-rcsmtp
+
+RUN chsh uucp -s /bin/bash
+
+EXPOSE 25
+EXPOSE 119
+EXPOSE 540
+
+# Start UUCP in foreground
+# CMD xinetd  -pidfile /run/xinetd.pid -dontfork -f /xinetd.conf
+# RUN postmap /etc/postfix/virtual
+# RUN newaliases
+# ENV MAIL_CONFIG=/work-dir/etc/postfix
+# CMD /usr/lib/postfix/sbin/master -c /work-dir/etc/postfix -d 2>&1

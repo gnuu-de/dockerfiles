@@ -9,6 +9,7 @@ list:
 File                  | Description
 --------------------- | -------------------------------------------------
 Dockerfile.inn        | INN Server (News)
+Dockerfile.innuucp    | INN Server (News) with UUCP backend
 Dockerfile.postfix    | Postfix Server (Mail)
 Dockerfile.szip-build | Helper Container to build szip from source (will be package in Kubernetes Job
 Dockerfile.uucp-build | Helper Container to patch uucp package with crypt password support

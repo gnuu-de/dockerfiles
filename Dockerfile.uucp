@@ -34,6 +34,4 @@ RUN chsh uucp -s /bin/bash
 
 EXPOSE 540
 
-# USER uucp
-# CMD /usr/lib/uucp/uucico
 CMD xinetd  -pidfile /run/xinetd.pid -dontfork -f /xinetd.conf
