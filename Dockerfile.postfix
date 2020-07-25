@@ -3,7 +3,6 @@ FROM ubuntu:20.04
 # Run Postfix mail server in container
 #
 ENV DEBIAN_FRONTEND=noninteractive
-ENV MAIL_CONFIG=/work-dir/etc/postfix
 RUN apt-get update && apt-get -y upgrade
 RUN apt-get install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew vim-tiny bash curl wget git postfix postfix-mysql bsd-mailx gettext-base bind9-host maildrop
 
@@ -25,4 +24,5 @@ EXPOSE 25
 
 #RUN postmap /etc/postfix/virtual
 RUN newaliases
+ENV MAIL_CONFIG=/work-dir/etc/postfix
 CMD /usr/lib/postfix/sbin/master -c /work-dir/etc/postfix -d 2>&1
