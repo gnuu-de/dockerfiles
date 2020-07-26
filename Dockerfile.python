@@ -15,6 +15,5 @@ USER appuser
 ENV PYTHONUNBUFFERED=0
 
 # COPY yourscript.py .
-
 # CMD [ "python", "./yourscript.py" ]
 

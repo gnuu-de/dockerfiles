@@ -16,3 +16,5 @@ markdown
 matrix-nio
 # flask input validation
 marshmallow
+# flask email
+flask_mail
