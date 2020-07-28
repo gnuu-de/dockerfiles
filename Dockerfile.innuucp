@@ -32,6 +32,7 @@ RUN echo 'module (load="builtin:ompipe")' >> /etc/rsyslog.conf
 # remove all syslog rules, redirect news to fifo
 COPY news/50-default.conf /etc/rsyslog.d/50-default.conf
 RUN mkdir /newslog && mkfifo /newslog/news.fifo && chown syslog:syslog /newslog/news.fifo
+RUN crontab /etc/cron.d/gnuu.cron
 
 # Part: News
 # create pid file dir
@@ -57,7 +58,7 @@ RUN dpkg -i bsmtp_1.02_amd64.deb
 # instal uucp package with lcyrpt
 RUN wget https://k8s.gnuu.de/repo/uucp_1.07-27build1_amd64.deb
 RUN dpkg -i uucp_1.07-27build1_amd64.deb
-
+#
 # set symlink to volume
 RUN rm -rf /var/spool/bsmtp
 RUN mkdir -p /data/spool/bsmtp
