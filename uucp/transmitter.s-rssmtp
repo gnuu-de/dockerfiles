@@ -1,0 +1,4 @@
+#!/usr/bin/sh
+
+/usr/local/bin/szip -9 -f | /usr/bin/uux -p -r -gA "$1"\!rssmtp
+

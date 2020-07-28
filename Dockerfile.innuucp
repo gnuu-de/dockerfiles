@@ -36,6 +36,9 @@ COPY news/50-default.conf /etc/rsyslog.d/50-default.conf
 RUN mkdir /newslog && mkfifo /newslog/news.fifo && chown syslog:syslog /newslog/news.fifo
 RUN crontab /etc/cron.d/gnuu.cron
 
+# install szip batcher
+COPY news/sunbatch /usr/lib/news/bin/rnews.libexec/sunbatch
+
 # Part: News
 # create pid file dir
 RUN mkdir -p /run/news
@@ -57,10 +60,13 @@ RUN ln -sf /data/log/news/news /var/log/news/news \
 RUN wget https://download.opensuse.org/repositories/home:/eumel_8/Debian_7.0/amd64/bsmtp_1.02_amd64.deb
 RUN dpkg -i bsmtp_1.02_amd64.deb
 
-# instal uucp package with lcyrpt
+# install uucp package with lcyrpt
 RUN wget https://k8s.gnuu.de/repo/uucp_1.07-27build1_amd64.deb
 RUN dpkg -i uucp_1.07-27build1_amd64.deb
 #
+# install szip program
+RUN wget https://k8s.gnuu.de/repo/szip
+RUN mv szip /usr/local/bin/szip
 # set symlink to volume
 RUN rm -rf /var/spool/bsmtp
 RUN mkdir -p /data/spool/bsmtp
@@ -76,6 +82,8 @@ COPY uucp/uucp.service /xinetd.conf
 COPY uucp/transmitter.b-rbsmtp /usr/sbin/transmitter.b-rbsmtp
 COPY uucp/transmitter.b-rcsmtp /usr/sbin/transmitter.b-rcsmtp
 COPY uucp/transmitter.g-rcsmtp /usr/sbin/transmitter.g-rcsmtp
+COPY uucp/transmitter.s-rcsmtp /usr/sbin/transmitter.s-rcsmtp
+COPY uucp/transmitter.s-rssmtp /usr/sbin/transmitter.s-rssmtp
 
 RUN chsh uucp -s /bin/bash
 
