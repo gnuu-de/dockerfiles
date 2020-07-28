@@ -10,7 +10,6 @@ ENV TERM=linux
 COPY news/inn.conf /etc/news/inn.conf
 # entrypoint with program starts
 COPY news/entrypoint.sh /entrypoint.sh
-
 # send-uucp program for different times and configs
 COPY news/send-uucp-gnuu /usr/local/bin/send-uucp-gnuu
 COPY news/send-uucp-gnuu.300 /usr/local/bin/send-uucp-gnuu.300
