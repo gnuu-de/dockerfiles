@@ -79,7 +79,6 @@ RUN chsh uucp -s /bin/bash
 EXPOSE 25
 EXPOSE 119
 EXPOSE 540
-
 # Start UUCP in foreground
 # CMD xinetd  -pidfile /run/xinetd.pid -dontfork -f /xinetd.conf
 # RUN postmap /etc/postfix/virtual
