@@ -1,0 +1,7 @@
+SHELL=/bin/sh
+PATH=/usr/lib/news/bin:/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin
+
+# Batch news to uucp accounts (needs running news server and uucp accounts)
+*/5 * * * * test -x /usr/local/bin/send-uucp-gnuu.300 && /usr/local/bin/send-uucp-gnuu.300
+
+

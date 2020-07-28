@@ -17,6 +17,7 @@ COPY news/send-uucp-gnuu.3600 /usr/local/bin/send-uucp-gnuu.3600
 COPY news/send-uucp-gnuu.21600 /usr/local/bin/send-uucp-gnuu.21600
 COPY news/send-uucp-gnuu.43200 /usr/local/bin/send-uucp-gnuu.43200
 COPY news/send-uucp-gnuu.86400 /usr/local/bin/send-uucp-gnuu.86400
+COPY news/gnuu.cron /etc/cron.d/gnuu.cron
 
 # uograde system & install packages for news and uucp
 RUN apt-get update && apt-get -y upgrade
