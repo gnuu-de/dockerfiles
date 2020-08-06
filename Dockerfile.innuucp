@@ -66,7 +66,7 @@ RUN dpkg -i uucp_1.07-27build1_amd64.deb
 #
 # install szip program
 RUN wget https://k8s.gnuu.de/repo/szip
-RUN mv szip /usr/local/bin/szip
+RUN chmod +x szip && mv szip /usr/local/bin/szip
 # set symlink to volume
 RUN rm -rf /var/spool/bsmtp
 RUN mkdir -p /data/spool/bsmtp
