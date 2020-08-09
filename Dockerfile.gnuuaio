@@ -34,6 +34,7 @@ RUN chown news:news /run/news
 RUN chmod 775 /run/news
 # change news shell 
 RUN chsh news -s /bin/bash
+RUN mkdir -p /var/www/inn && chown news:news /var/www/inn
 
 # Part UUCP
 # install szip batcher
