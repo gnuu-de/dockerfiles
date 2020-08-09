@@ -9,9 +9,6 @@ ENV TERM=linux
 COPY aio/inn.conf /etc/news/inn.conf
 # entrypoint with program starts
 COPY aio/entrypoint.sh /entrypoint.sh
-# cron send-uucp, batcher, uucico every 5 min
-COPY aio/gnuu.cron /etc/cron.d/gnuu.cron
-RUN crontab /etc/cron.d/gnuu.cron
 
 # Upgrade system & install packages
 RUN apt-get update && apt-get -y upgrade
@@ -20,6 +17,11 @@ RUN apt-get install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--f
 
 # Add kubectl
 RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x kubectl && mv kubectl /usr/local/bin/
+
+# Part Cron
+# cron send-uucp, batcher, uucico every 5 min
+COPY aio/gnuu.cron /etc/cron.d/gnuu.cron
+RUN crontab /etc/cron.d/gnuu.cron
 
 # Part Syslog
 # deactivate kernel log in container for rsyslog
