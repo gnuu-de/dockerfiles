@@ -69,5 +69,6 @@ RUN alpine -conf > .pinerc
 RUN sed -i 's/^smtp-server/smtp-server=127.0.0.1/' /home/linux/.pinerc
 RUN sed -i 's/^nntp-server/nntp-server=127.0.0.1/' /home/linux/.pinerc
 
+USER 0
 # expose shellinabox
 EXPOSE 4200
