@@ -17,7 +17,7 @@ COPY aio/entrypoint.sh /entrypoint.sh
 
 # upgrade system & install packages
 RUN apt-get update && apt-get -y upgrade
-RUN apt-get install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew vim-tiny bash curl wget git inn2 rsyslog rmail bsd-mailx xinetd cu gettext-base bind9-host cron shellinabox
+RUN apt-get install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew vim-tiny bash curl wget git inn2 rsyslog rmail bsd-mailx xinetd cu gettext-base bind9-host cron shellinabox alpine
 RUN apt-get install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew postfix 
 
 # Part Syslog
