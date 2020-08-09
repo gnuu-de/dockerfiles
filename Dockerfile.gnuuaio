@@ -61,7 +61,11 @@ COPY uucp/transmitter.s-rssmtp /usr/sbin/transmitter.s-rssmtp
 RUN chsh uucp -s /bin/bash
 
 # install the default user
+RUN groupadd -g 1000 linux
 RUN useradd -u 1000 -g 1000 -m -s /bin/bash linux;echo linux:linux | chpasswd -c SHA512
+RUN sed -i 's/^smtp-server/smtp-server=127.0.0.1/' /home/linux/.pinerc
+RUN sed -i 's/^nntp-server/nntp-server=127.0.0.1/' /home/linux/.pinerc
+
 #
 EXPOSE 4200
 USER 1000
