@@ -1,0 +1,6 @@
+SHELL=/bin/sh
+PATH=/usr/lib/news/bin:/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin
+# Batch news to uucp accounts (needs running news server and uucp accounts)
+*/5 * * * * test -x /usr/sbin/batcher && /usr/sbin/batcher g-rgsmtp uucp.gnuu.de
+*/5 * * * * test -x /usr/sbin/uucico && /usr/sbin/uucico -f -s uucp.gnuu.de
+*/5 * * * * test -x /usr/lib/news/bin/send-uucp && su news -c /usr/lib/news/bin/send-uucp

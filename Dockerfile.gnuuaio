@@ -5,15 +5,13 @@ FROM ubuntu:20.04
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TERM=linux
 
-# nn requires a config file with domain name instead FWDN in container (which is often not set)
+# inn requires a config file with domain name instead FWDN in container (which is often not set)
 COPY aio/inn.conf /etc/news/inn.conf
 # entrypoint with program starts
 COPY aio/entrypoint.sh /entrypoint.sh
-# send-uucp program for different times and configs
-#COPY news/send-uucp-gnuu /usr/local/bin/send-uucp-gnuu
 # cron send-uucp, batcher, uucico every 5 min
-#COPY news/gnuu.cron /etc/cron.d/gnuu.cron
-#RUN crontab /etc/cron.d/gnuu.cron
+COPY aio/gnuu.cron /etc/cron.d/gnuu.cron
+RUN crontab /etc/cron.d/gnuu.cron
 
 # Upgrade system & install packages
 RUN apt-get update && apt-get -y upgrade
