@@ -64,6 +64,7 @@ RUN chsh uucp -s /bin/bash
 RUN groupadd -g 1000 linux
 RUN useradd -u 1000 -g 1000 -m -s /bin/bash linux;echo linux:linux | chpasswd -c SHA512
 USER 1000
+WORKDIR /home/linux
 RUN alpine -conf > .pinerc
 RUN sed -i 's/^smtp-server/smtp-server=127.0.0.1/' /home/linux/.pinerc
 RUN sed -i 's/^nntp-server/nntp-server=127.0.0.1/' /home/linux/.pinerc
