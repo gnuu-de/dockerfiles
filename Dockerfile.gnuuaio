@@ -1,0 +1,61 @@
+FROM ubuntu:20.04
+#
+# Run News, Mail, UUCP, ans shell access all in one
+#
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TERM=linux
+
+# nn requires a config file with domain name instead FWDN in container (which is often not set)
+COPY aio/inn.conf /etc/news/inn.conf
+# entrypoint with program starts
+COPY aio/entrypoint.sh /entrypoint.sh
+# send-uucp program for different times and configs
+#COPY news/send-uucp-gnuu /usr/local/bin/send-uucp-gnuu
+# cron send-uucp, batcher, uucico every 5 min
+#COPY news/gnuu.cron /etc/cron.d/gnuu.cron
+#RUN crontab /etc/cron.d/gnuu.cron
+
+# upgrade system & install packages
+RUN apt-get update && apt-get -y upgrade
+RUN apt-get install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew vim-tiny bash curl wget git inn2 rsyslog rmail bsd-mailx xinetd cu gettext-base bind9-host cron shellinabox
+RUN apt-get install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew postfix 
+
+# Part Syslog
+# deactivate kernel log in container for rsyslog
+RUN sed -i '/imklog/s/^module/# /' /etc/rsyslog.conf
+
+# Part NEWS
+# create pid file dir
+RUN mkdir -p /run/news
+RUN chown news:news /run/news
+RUN chmod 775 /run/news
+# change news shell 
+RUN chsh news -s /bin/bash
+
+# Part UUCP
+# install szip batcher
+COPY aio/sunbatch /usr/lib/news/bin/rnews.libexec/sunbatch
+# install bsmtp package for uucp mail delivery
+RUN wget https://download.opensuse.org/repositories/home:/eumel_8/Debian_7.0/amd64/bsmtp_1.02_amd64.deb
+RUN dpkg -i bsmtp_1.02_amd64.deb
+# install uucp package with lcyrpt
+RUN wget https://k8s.gnuu.de/repo/uucp_1.07-27build1_amd64.deb
+RUN dpkg -i uucp_1.07-27build1_amd64.deb
+# install szip program
+RUN wget https://k8s.gnuu.de/repo/szip
+RUN chmod +x szip && mv szip /usr/local/bin/szip
+# fix broken links from bsmtp package
+RUN rm /usr/bin/rgsmtp && ln -s /usr/bin/rcsmtp /usr/bin/rgsmtp
+RUN rm /usr/bin/cbsmtp && ln -s /usr/bin/rcsmtp /usr/bin/cbsmtp
+RUN rm /usr/bin/crsmtp && ln -s /usr/bin/rcsmtp /usr/bin/crsmtp
+RUN rm /usr/bin/bsmtp && ln -s /usr/bin/rsmtp /usr/bin/bsmtp
+# copy custom config files
+COPY uucp/transmitter.b-rbsmtp /usr/sbin/transmitter.b-rbsmtp
+COPY uucp/transmitter.b-rcsmtp /usr/sbin/transmitter.b-rcsmtp
+COPY uucp/transmitter.g-rcsmtp /usr/sbin/transmitter.g-rcsmtp
+COPY uucp/transmitter.s-rcsmtp /usr/sbin/transmitter.s-rcsmtp
+COPY uucp/transmitter.s-rssmtp /usr/sbin/transmitter.s-rssmtp
+RUN chsh uucp -s /bin/bash
+
+# install the default user
+RUN useradd -m -s /bin/bash linux;echo linux:linux | chpasswd -c SHA512
