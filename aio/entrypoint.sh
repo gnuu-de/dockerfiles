@@ -16,6 +16,7 @@ if [ /etc/postfix/virtual ]; then
   postmap /etc/postfix/virtual
 fi
 # start services
+/usr/sbin/cron
 /usr/bin/shellinaboxd -tb
 /usr/sbin/rsyslogd
 /usr/lib/news/bin/rc.news

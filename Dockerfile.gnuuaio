@@ -61,7 +61,7 @@ COPY uucp/transmitter.s-rcsmtp /usr/sbin/transmitter.s-rcsmtp
 COPY uucp/transmitter.s-rssmtp /usr/sbin/transmitter.s-rssmtp
 RUN chsh uucp -s /bin/bash
 
-# install the default user
+# install the default user and prepare home dir
 RUN groupadd -g 1000 linux
 RUN useradd -u 1000 -g 1000 -m -s /bin/bash linux;echo linux:linux | chpasswd -c SHA512
 USER 1000
