@@ -59,3 +59,5 @@ RUN chsh uucp -s /bin/bash
 
 # install the default user
 RUN useradd -m -s /bin/bash linux;echo linux:linux | chpasswd -c SHA512
+#
+EXPOSE 4200
