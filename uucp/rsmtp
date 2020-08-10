@@ -1,0 +1,92 @@
+#! /usr/bin/perl
+
+# Copyright (c) 1995-1999 Hannah Schroeter <hannah@mamba.pond.sub.org>
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#  1. Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer,
+#     either in a separate file included with the distribution, or
+#     copied into the source files.
+#  2. Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND HIS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR HIS CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+# OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+# HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+# OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+# SUCH DAMAGE.
+
+$debug=0;
+open (STDERR, ">>/tmp/rsmtp.stderr") if ($debug);
+print STDERR "--\n" if ($debug);
+$helo=<>;
+$helo=~tr/\r\n//d;
+if ( ! ($helo =~ /^\s*helo\s+([^\s]+)$/i)) {
+  print STDERR "Incorrect HELO line\n";
+  exit 1;
+}
+$fromhost = $1;
+print STDERR "Fromhost: $fromhost\n" if ($debug);
+$fromhost =~ s/\'/\'\\\'\'/g;
+$fromhost = "\'" . $fromhost . "\'";
+$sendmailproto = "/usr/sbin/sendmail -odi -oi ";
+if ('8.9' =~ /^8\.[89]/) {
+  $sendmailproto .= "-oee";
+} else {
+  $sendmailproto .= "-oem";
+}
+
+# Now the Mails come.
+while (<>) {
+  tr/\r\n//d;
+  last if (/^\s*quit\s*$/i);
+  if (! /^\s*mail\s+from\s*:\s*\<(.*)\>\s*$/i) {
+    print STDERR "Incorrect MAIL FROM line\n";
+    exit 1;
+  }
+  $mailfrom = $1;
+  print STDERR "Mailfrom: $mailfrom\n" if ($debug);
+  $mailfrom = '<>' if ($mailfrom eq "");
+  $mailfrom =~ s/\'/\'\\\'\'/g;
+  $mailfrom = "\'" . $mailfrom . "\'";
+  @recipients = ();
+  while (<>) {
+    tr/\r\n//d;
+    last if (/^\s*data\s*$/i);
+    if (! /^\s*rcpt\s+to\s*:\s*\<(.*)\>\s*$/i) {
+      print STDERR "Incorrect RCPT TO line\n";
+      exit 1;
+    }
+    $r = $1;
+    $r =~ s/\'/\'\\\'\'/g;
+    $r = "\'" . $r . "\'";
+    print STDERR "Recipient: $r\n" if ($debug);
+    push (@recipients, $r);
+  }
+  $sendmail="$sendmailproto -f$mailfrom -pbsmtp:$fromhost";
+  while (defined $recipients[0]) {
+    $sendmail .= " " . $recipients[0];
+    shift (@recipients);
+  }
+  print STDERR "Spawning $sendmail\n" if ($debug);
+  open (SENDMAIL, "| $sendmail") || die "Can't spawn sendmail\n";
+  while (<>) {
+    tr/\r\n//d;
+    last if (/^\.$/);
+    s/^\.\./\./;
+    $_ .= "\n";
+    print SENDMAIL;
+  }
+  close SENDMAIL; # || die "Error in sendmail\n";
+}
+print STDERR "QUIT\n" if ($debug);
+exit 0;

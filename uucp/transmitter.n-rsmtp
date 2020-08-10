@@ -1,0 +1,3 @@
+#! /bin/sh
+
+/usr/bin/uux -p -r -gA "$1"\!rsmtp

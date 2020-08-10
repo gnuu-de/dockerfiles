@@ -29,6 +29,10 @@ COPY uucp/uucp.service /xinetd.conf
 COPY uucp/transmitter.b-rbsmtp /usr/sbin/transmitter.b-rbsmtp
 COPY uucp/transmitter.b-rcsmtp /usr/sbin/transmitter.b-rcsmtp
 COPY uucp/transmitter.g-rcsmtp /usr/sbin/transmitter.g-rcsmtp
+COPY uucp/transmitter.c-cbsmtp /usr/sbin/transmitter.c-cbsmtp
+COPY uucp/transmitter.c-rcsmtp /usr/sbin/transmitter.c-rcsmtp
+COPY uucp/transmitter.n-rsmtp /usr/sbin/transmitter.n-rsmtp
+COPY uucp/rsmtp /usr/sbin/rsmtp
 
 RUN chsh uucp -s /bin/bash
 
