@@ -71,5 +71,5 @@ RUN sed -i 's/^smtp-server=/smtp-server=127.0.0.1/' /home/linux/.pinerc
 RUN sed -i 's/^nntp-server=/nntp-server=127.0.0.1/' /home/linux/.pinerc
 
 USER 0
-# expose shellinabox
+# expose shellinabox, all other services are internally
 EXPOSE 4200

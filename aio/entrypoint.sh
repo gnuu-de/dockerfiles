@@ -8,6 +8,10 @@ chown news:news /var/lib/news/*
 if [ -d /etc/news-aio ]; then
   cp /etc/news-aio/* /etc/news/
 fi
+# merge mail config
+if [ -d /etc/postfix-aio ]; then
+  cp /etc/postfix-aio/* /etc/postfix/
+fi
 # build postfix db
 if [ /etc/postfix/transport ]; then
   postmap /etc/postfix/transport
