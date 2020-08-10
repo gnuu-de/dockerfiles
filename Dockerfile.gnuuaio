@@ -42,6 +42,7 @@ COPY aio/sunbatch /usr/lib/news/bin/rnews.libexec/sunbatch
 # install bsmtp package for uucp mail delivery
 RUN wget https://download.opensuse.org/repositories/home:/eumel_8/Debian_7.0/amd64/bsmtp_1.02_amd64.deb
 RUN dpkg -i bsmtp_1.02_amd64.deb
+RUN chmod +s /usr/sbin/bsmtp
 # install uucp package with lcyrpt
 RUN wget https://k8s.gnuu.de/repo/uucp_1.07-27build1_amd64.deb
 RUN dpkg -i uucp_1.07-27build1_amd64.deb
