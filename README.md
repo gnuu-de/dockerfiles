@@ -8,6 +8,7 @@ list:
 
 File                  | Description
 --------------------- | -------------------------------------------------
+Dockerfile.gnuuaio    | All in One UUCP Client
 Dockerfile.inn        | INN Server (News)
 Dockerfile.innuucp    | INN Server (News) with UUCP backend
 Dockerfile.postfix    | Postfix Server (Mail)

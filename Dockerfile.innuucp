@@ -84,6 +84,10 @@ COPY uucp/transmitter.b-rcsmtp /usr/sbin/transmitter.b-rcsmtp
 COPY uucp/transmitter.g-rcsmtp /usr/sbin/transmitter.g-rcsmtp
 COPY uucp/transmitter.s-rcsmtp /usr/sbin/transmitter.s-rcsmtp
 COPY uucp/transmitter.s-rssmtp /usr/sbin/transmitter.s-rssmtp
+COPY uucp/transmitter.c-cbsmtp /usr/sbin/transmitter.c-cbsmtp
+COPY uucp/transmitter.c-rcsmtp /usr/sbin/transmitter.c-rcsmtp
+COPY uucp/transmitter.n-rsmtp /usr/sbin/transmitter.n-rsmtp
+COPY uucp/rsmtp /usr/sbin/rsmtp
 
 RUN chsh uucp -s /bin/bash
 
