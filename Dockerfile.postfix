@@ -11,7 +11,8 @@ RUN wget https://download.opensuse.org/repositories/home:/eumel_8/Debian_7.0/amd
 RUN dpkg -i bsmtp_1.02_amd64.deb
 
 # entrypoint start script
-COPY mail/entrypoint.sh /entrypoint.sh
+COPY mail/postfix.sh /postfix.sh
+COPY mail/sqlgrey.sh /sqlgrey.sh
 
 # set permission and maildir
 RUN chown root:uucp /usr/sbin/bsmtp
