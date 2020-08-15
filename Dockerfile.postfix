@@ -24,7 +24,10 @@ RUN ln -s /data/spool/bsmtp /var/spool/bsmtp
 # forward request and error logs to docker log collector
 #RUN ln -sf /dev/stdout /var/log/mail.log
 
+# expose postfix
 EXPOSE 25
+# expose sqlgrey
+EXPOSE 2501
 
 #RUN postmap /etc/postfix/virtual
 RUN newaliases
