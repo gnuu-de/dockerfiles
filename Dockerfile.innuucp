@@ -61,11 +61,11 @@ RUN wget https://download.opensuse.org/repositories/home:/eumel_8/Debian_7.0/amd
 RUN dpkg -i bsmtp_1.02_amd64.deb
 
 # install uucp package with lcyrpt
-RUN wget https://k8s.gnuu.de/repo/uucp_1.07-27build1_amd64.deb
+RUN wget https://www.gnuu.de/repo/uucp_1.07-27build1_amd64.deb
 RUN dpkg -i uucp_1.07-27build1_amd64.deb
 #
 # install szip program
-RUN wget https://k8s.gnuu.de/repo/szip
+RUN wget https://www.gnuu.de/repo/szip
 RUN chmod +x szip && mv szip /usr/local/bin/szip
 # set symlink to volume
 RUN rm -rf /var/spool/bsmtp
