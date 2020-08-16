@@ -21,6 +21,7 @@ COPY news/send-uucp-gnuu.86400 /usr/local/bin/send-uucp-gnuu.86400
 # cron for the send-uucp
 COPY news/gnuu.cron /etc/cron.d/gnuu.cron
 
+
 # uograde system & install packages for news and uucp
 RUN apt-get update && apt-get -y upgrade
 RUN apt-get install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew vim-tiny bash curl wget git inn2 rsyslog rmail bsd-mailx xinetd cu gettext-base bind9-host cron
