@@ -2,10 +2,9 @@ FROM ubuntu:20.04
 #
 # Run INN newsserver with UUCP backend in container for gnuu.de
 #
-# install inn
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TERM=linux
-
+# install inn
 # requires a config file with domain name instead FWDN in container (which is often not set)
 COPY news/inn.conf /etc/news/inn.conf
 # entrypoint with program starts
