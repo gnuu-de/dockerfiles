@@ -91,6 +91,8 @@ COPY uucp/rsmtp /usr/sbin/rsmtp
 
 RUN chsh uucp -s /bin/bash
 
+ENV MAIL_CONFIG=/work-dir/etc/postfix-out
+
 EXPOSE 25
 EXPOSE 119
 EXPOSE 540

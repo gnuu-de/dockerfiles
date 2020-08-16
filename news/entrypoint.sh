@@ -2,6 +2,6 @@
 
 /usr/sbin/cron
 /usr/sbin/rsyslogd
+/usr/lib/postfix/sbin/master
 xinetd  -pidfile /run/xinetd.pid -f /xinetd.conf
-#xinetd  -pidfile /run/xinetd.pid -dontfork -f /xinetd.conf
 /usr/lib/news/bin/rc.news
