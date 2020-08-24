@@ -55,6 +55,9 @@ RUN ln -sf /data/log/news/news /var/log/news/news \
     && ln -sf /data/log/news/news.crit /var/log/news/news.crit \
     && ln -sf /data/log/news/errlog /var/log/news/errlog
 
+# nologs in news.daily
+RUN sed -i 's/news.daily expireover lowmark delayrm/news.daily expireover lowmark delayrm nologs/' /etc/cron.d/inn2
+
 # Part UUCP
 # install bsmtp package for uucp mail delivery
 RUN wget https://download.opensuse.org/repositories/home:/eumel_8/Debian_7.0/amd64/bsmtp_1.02_amd64.deb
