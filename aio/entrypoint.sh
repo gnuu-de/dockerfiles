@@ -1,8 +1,8 @@
 #!/bin/sh
 
 # Catch active & newsgroups file
-curl -o /var/lib/news/active http://www.gnuu.de/config/active
-curl -o /var/lib/news/newsgroups http://www.gnuu.de/config/newsgroups
+curl -o /var/lib/news/active https://www.gnuu.de/config/active
+curl -o /var/lib/news/newsgroups https://www.gnuu.de/config/newsgroups
 chown news:news /var/lib/news/*
 # merge news config
 if [ -d /etc/news-aio ]; then
