@@ -1,5 +1,6 @@
 FROM ubuntu:20.04
 #
+##
 # Run News, Mail, UUCP, ans shell access all in one
 #
 ENV DEBIAN_FRONTEND=noninteractive
