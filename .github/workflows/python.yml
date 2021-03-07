@@ -2,6 +2,7 @@ on:
   push: 
     paths: 
     - 'Dockerfile.python'
+    - 'requirements.txt'
 name: Build & Push Dockerfile.python
 jobs:
   deploy:
