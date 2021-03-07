@@ -21,3 +21,4 @@ flask_mail
 # monitoring
 prometheus_client
 flask-prometheus
+prometheus_flask_exporter
