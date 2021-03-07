@@ -18,7 +18,7 @@ matrix-nio
 marshmallow
 # flask email
 flask_mail
-# monitoring
+# monitoring prometheus
 prometheus_client
 flask-prometheus
 prometheus_flask_exporter
