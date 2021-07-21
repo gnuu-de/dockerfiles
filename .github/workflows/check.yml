@@ -1,0 +1,12 @@
+#on: 
+#  push: 
+#    paths: 
+#    - 'showcases'
+name: showcases
+jobs:
+  - name: show env
+    runs-on: ubuntu-latest
+    run: |
+      env
+    env:
+      DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
