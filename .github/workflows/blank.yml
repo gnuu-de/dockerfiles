@@ -33,5 +33,6 @@ jobs:
       - name: Run a multi-line script
         run: |
           env
+          echo $DDOCKER_USERNAME
         env:
-          DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
+          DDOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
