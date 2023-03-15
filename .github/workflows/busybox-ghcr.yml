@@ -1,0 +1,16 @@
+- name: Build & Sign Busybox
+  uses: philips-software/docker-ci-scripts@v4.5.0
+  with:
+    dockerfile: Dockerfile.busybox
+    image-name: busybox
+    tags: latest 0.1
+    push-branches: master dev
+    sign: true
+  env:
+    REGISTRY_USERNAME: ${{ github.actor }}
+    REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    REGISTRY_URL: ghcr.io/gnuu-de
+    GITHUB_ORGANIZATION: gnuu-de
+    COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+    #COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+    #COSIGN_PUBLIC_KEY: ${{ secrets.COSIGN_PUBLIC_KEY }}
