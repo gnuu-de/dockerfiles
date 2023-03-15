@@ -1,3 +1,8 @@
+on: 
+  push: 
+    paths: 
+    - 'Dockerfile.busybox'
+name: Build & Sign & Push Dockerfile.busybox
 - name: Build & Sign Busybox
   uses: philips-software/docker-ci-scripts@v4.5.0
   with:
