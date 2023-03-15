@@ -1,7 +1,7 @@
 on: 
   push: 
-    paths: 
-    - 'Dockerfile.busybox'
+#    paths: 
+#    - 'Dockerfile.busybox'
 name: Build & Sign & Push Dockerfile.busybox
 jobs:
   build:
