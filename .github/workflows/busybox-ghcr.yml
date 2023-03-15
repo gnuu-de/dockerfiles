@@ -1,7 +1,10 @@
 on: 
   push: 
-#    paths: 
-#    - 'Dockerfile.busybox'
+    paths: 
+    - 'Dockerfile.busybox'
+  release:
+    types: [created]
+
 name: Build & Sign & Push Dockerfile.busybox
 
 env:
