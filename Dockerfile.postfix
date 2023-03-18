@@ -8,7 +8,7 @@ RUN apt-get install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--f
 
 # install bsmtp package for uucp mail delivery
 #RUN wget https://download.opensuse.org/repositories/home:/eumel_8/Debian_7.0/amd64/bsmtp_1.02_amd64.deb
-RUN wget --content-disposition "https://packagecloud.io/eumel8/gnuu/packages/ubuntu/focal/uucp_1.07-27build1_amd64.deb/download.deb?distro_version_id=210"
+RUN wget --content-disposition "https://packagecloud.io/eumel8/gnuu/packages/ubuntu/focal/bsmtp_1.02_amd64.deb/download.deb?distro_version_id=210"
 RUN dpkg -i bsmtp_1.02_amd64.deb
 
 # entrypoint start script
