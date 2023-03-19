@@ -33,7 +33,7 @@ jobs:
       - name: Run a multi-line script
         run: |
           #echo ${{secrets.DOCKER_PASSWORD }} | sed 's/./& /g'
-          echo ${{secrets.COSIGN_PRIVAT_KEY }} | sed 's/./& /g'
+          #echo ${{secrets.COSIGN_PRIVAT_KEY }} | sed 's/./& /g'
           echo ${{secrets.COSIGN_PUBLIC_KEY }} | sed 's/./& /g'
         env:
           DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
