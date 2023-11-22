@@ -1,7 +1,7 @@
 #############################
 # Multi-Stage Build
 
-FROM golang:stretch as builder
+FROM golang:latest as builder
 
 # Install system deps
 #   We need this in order to build oniguruma.
