@@ -2,10 +2,10 @@ on:
   push: 
     paths: 
     - 'Dockerfile.s3adm'
+    tags:
+    - '*'
   release:
     types: [created]
-  tags:
-    - '*'
 
 name: Build & Sign & Push Dockerfile.s3adm
 
