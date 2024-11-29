@@ -11,7 +11,7 @@ RUN apk add --no-cache py-pip && pip install s3cmd
 # Add kubectl
 RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x kubectl && mv kubectl /usr/local/bin/
 #
-RUN useradd --create-home appuser
+RUN adduser -u 1000 -D appuser
 WORKDIR /home/appuser
 USER appuser
 ENV PYTHONUNBUFFERED=0
