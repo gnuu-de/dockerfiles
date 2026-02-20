@@ -1,6 +1,6 @@
 # flask & mysql & jinja templates
 click==7.1.2
-Flask==2.3.2
+Flask==3.1.3
 Flask-MySQLdb==0.2.0
 gunicorn==23.0.0
 itsdangerous==1.1.0
