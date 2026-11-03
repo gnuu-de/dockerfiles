@@ -63,10 +63,9 @@ COPY uucp/transmitter.s-rssmtp /usr/sbin/transmitter.s-rssmtp
 
 RUN chsh uucp -s /bin/bash
 
-# install the default user and prepare home dir
-RUN if ! getent group 1000 >/dev/null; then groupadd -g 1000 linux; fi
-RUN useradd -u 1000 -g 1000 -m -s /bin/bash linux && echo linux:linux | chpasswd -c SHA512
-USER 1000
+# install the interactive user without colliding with INN's UID/GID 1000
+RUN groupadd -g 2000 linux && useradd -u 2000 -g linux -m -s /bin/bash linux && echo linux:linux | chpasswd -c SHA512
+USER 2000
 WORKDIR /home/linux
 RUN alpine -conf > .pinerc
 RUN sed -i 's/^smtp-server=/smtp-server=127.0.0.1/' /home/linux/.pinerc

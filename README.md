@@ -30,6 +30,10 @@ on pushes to `v2`, pull requests against `v2`, and version tags. Published
 images use the `v2` tag on this branch and are signed by digest with Cosign
 keyless GitHub OIDC identities. Pull requests build without publishing.
 
+The interactive `linux` account in `gnuuaio` uses UID/GID 2000; Ubuntu's INN
+package occupies UID/GID 1000. Match the home-directory volume ownership to
+UID/GID 2000 when deploying that image.
+
 ref: https://github.com/marketplace/actions/build-and-push-docker-images
 
 Elements image is mirrored:
