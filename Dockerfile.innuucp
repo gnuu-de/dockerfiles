@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:24.04
 #
 # Run INN newsserver with UUCP backend in container for gnuu.de
 #
@@ -22,9 +22,10 @@ COPY news/gnuu.cron /etc/cron.d/gnuu.cron
 
 
 # uograde system & install packages for news and uucp
-RUN apt-get update && apt-get -y upgrade
-RUN apt-get install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew vim-tiny bash curl wget git inn2 rsyslog rmail bsd-mailx xinetd cu gettext-base bind9-host cron
-RUN apt-get install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew vim-tiny postfix postfix-mysql
+RUN apt-get update && apt-get install -y --no-install-recommends -o Dpkg::Options::=--force-confold \
+    vim-tiny bash ca-certificates curl wget git inn2 rsyslog bsd-mailx \
+    xinetd cu gettext-base bind9-host cron postfix postfix-mysql \
+    libpam0g libcrypt1 adduser && rm -rf /var/lib/apt/lists/*
 
 # Part: Syslog
 # deactivate kernel log in container for rsyslog
@@ -59,15 +60,18 @@ RUN ln -sf /data/log/news/news /var/log/news/news \
 RUN sed -i 's/news.daily expireover lowmark delayrm/news.daily expireover lowmark delayrm nologs/' /etc/cron.d/inn2
 
 # Part UUCP
-# install bsmtp package for uucp mail delivery
-# RUN wget https://download.opensuse.org/repositories/home:/eumel_8/Debian_7.0/amd64/bsmtp_1.02_amd64.deb
-RUN wget --content-disposition "https://packagecloud.io/eumel8/gnuu/packages/ubuntu/focal/bsmtp_1.02_amd64.deb/download.deb?distro_version_id=210"
-RUN dpkg -i bsmtp_1.02_amd64.deb
-
-# install uucp package with lcyrpt
-#RUN wget https://www.gnuu.de/repo/uucp_1.07-27build1_amd64.deb
-RUN wget --content-disposition "https://packagecloud.io/eumel8/gnuu/packages/ubuntu/focal/uucp_1.07-27build1_amd64.deb/download.deb?distro_version_id=210"
-RUN dpkg -i uucp_1.07-27build1_amd64.deb
+# Verified release packages (amd64); the Go UUCP port provides the uucp account.
+ARG UUCP_VERSION=1.07-27build1+go1.27.1
+ARG UUCP_SHA256=270cede7105858f4411dc0f2f6d3a6bf484bde322a9f3dfc392a5f84f25eafe0
+ARG BSMTP_VERSION=2.0.0-1
+ARG BSMTP_SHA256=f41f52aab2bcd5fd19e44923882ec0ab9be51736a3483ec484b0dbd5e3738a7b
+RUN set -eu; \
+    curl -fL --retry 3 "https://github.com/gnuu-de/uucp/releases/download/v${UUCP_VERSION}/uucp-go_${UUCP_VERSION}_amd64.deb" -o /tmp/uucp.deb; \
+    curl -fL --retry 3 "https://github.com/gnuu-de/bsmtp/releases/download/v${BSMTP_VERSION}/bsmtp_${BSMTP_VERSION}_amd64.deb" -o /tmp/bsmtp.deb; \
+    echo "${UUCP_SHA256}  /tmp/uucp.deb" | sha256sum -c -; \
+    echo "${BSMTP_SHA256}  /tmp/bsmtp.deb" | sha256sum -c -; \
+    apt-get update && apt-get install -y --no-install-recommends /tmp/uucp.deb /tmp/bsmtp.deb; \
+    rm -f /tmp/uucp.deb /tmp/bsmtp.deb; rm -rf /var/lib/apt/lists/*
 #
 # install szip program
 RUN wget https://www.gnuu.de/repo/szip
@@ -77,28 +81,16 @@ RUN rm -rf /var/spool/bsmtp
 RUN mkdir -p /data/spool/bsmtp
 RUN ln -s /data/spool/bsmtp /var/spool/bsmtp
 
-# fix broken links from bsmtp package
-RUN rm /usr/bin/rgsmtp && ln -s /usr/bin/rcsmtp /usr/bin/rgsmtp
-RUN rm /usr/bin/cbsmtp && ln -s /usr/bin/rcsmtp /usr/bin/cbsmtp
-RUN rm /usr/bin/crsmtp && ln -s /usr/bin/rcsmtp /usr/bin/crsmtp
-RUN rm /usr/bin/bsmtp && ln -s /usr/bin/rsmtp /usr/bin/bsmtp
 # copy custom config files
 COPY uucp/uucp.service /xinetd.conf
 COPY uucp/transmitter.b-rbsmtp /usr/sbin/transmitter.b-rbsmtp
 COPY uucp/transmitter.b-rcsmtp /usr/sbin/transmitter.b-rcsmtp
-COPY uucp/transmitter.g-rcsmtp /usr/sbin/transmitter.g-rcsmtp
 COPY uucp/transmitter.s-rcsmtp /usr/sbin/transmitter.s-rcsmtp
 COPY uucp/transmitter.s-rssmtp /usr/sbin/transmitter.s-rssmtp
-COPY uucp/transmitter.c-cbsmtp /usr/sbin/transmitter.c-cbsmtp
-COPY uucp/transmitter.c-rcsmtp /usr/sbin/transmitter.c-rcsmtp
-COPY uucp/transmitter.n-rsmtp /usr/sbin/transmitter.n-rsmtp
-COPY uucp/rsmtp /usr/sbin/rsmtp
 
 RUN chsh uucp -s /bin/bash
 
-# set permission and maildir
-RUN chown root:uucp /usr/sbin/bsmtp
-RUN chmod +s /usr/sbin/bsmtp
+# set maildir (the Go bsmtp binary intentionally has no setuid bit)
 # postfix conf for outgoing mail from uucp
 RUN rm -rf /var/spool/postfix && ln -s /data/spool/postfix-out /var/spool/postfix
 ENV MAIL_CONFIG=/work-dir/etc/postfix-out

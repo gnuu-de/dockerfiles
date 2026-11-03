@@ -1,13 +1,12 @@
-FROM python:3.8.3-slim
+FROM python:3.13-slim-bookworm
 
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get -y upgrade
-RUN apt-get install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew vim-tiny python3-venv python3-dev net-tools default-mysql-client gcc default-libmysqlclient-dev libssl-dev git curl
-RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x kubectl && mv kubectl /usr/local/bin/
+RUN apt-get update && apt-get install -y --no-install-recommends vim-tiny net-tools default-mysql-client gcc default-libmysqlclient-dev pkg-config libssl-dev git curl ca-certificates && rm -rf /var/lib/apt/lists/*
+RUN curl -fsSL --retry 3 "https://dl.k8s.io/release/$(curl -fsSL https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" -o /usr/local/bin/kubectl && chmod +x /usr/local/bin/kubectl
 
 COPY requirements.txt /tmp/requirements.txt
 
-RUN pip install -r /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
 
 RUN useradd --create-home appuser
 WORKDIR /home/appuser

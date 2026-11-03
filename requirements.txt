@@ -1,24 +1,16 @@
-# flask & mysql & jinja templates
-click==7.1.2
-Flask==2.3.2
-Flask-MySQLdb==0.2.0
-gunicorn==23.0.0
-itsdangerous==1.1.0
-Jinja2==3.1.6
-MarkupSafe==1.1.1
-mysqlclient==1.4.6
-waitress==3.0.1
-Werkzeug==3.1.5
-# docker webhook api
-dockerhub-webhook
-# matrix webhook bot
+# Web application, MySQL and templates
+Flask>=3.1,<4
+Flask-MySQLdb>=2,<3
+gunicorn>=23,<25
+waitress>=3,<4
+# Webhooks and Matrix
+# dockerhub-webhook 0.2.1 requires Flask 0.12 and cannot run with Flask 3.
 markdown
 matrix-nio
-# flask input validation
+# Input validation and email
 marshmallow
-# flask email
-flask_mail
-# monitoring prometheus
-prometheus_client
+Flask-Mail
+# Prometheus
+prometheus-client
 flask-prometheus
-prometheus_flask_exporter
+prometheus-flask-exporter

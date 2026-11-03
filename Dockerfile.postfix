@@ -1,23 +1,32 @@
-FROM ubuntu:20.04
+FROM ubuntu:24.04
 #
 # Run Postfix mail server in container
 #
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get -y upgrade
-RUN apt-get install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew vim-tiny bash curl wget git postfix postfix-mysql bsd-mailx gettext-base bind9-host sqlgrey libdbd-mysql-perl
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    vim-tiny bash ca-certificates curl wget git postfix postfix-mysql \
+    bsd-mailx gettext-base bind9-host sqlgrey libdbd-mysql-perl adduser \
+    && rm -rf /var/lib/apt/lists/*
 
-# install bsmtp package for uucp mail delivery
-#RUN wget https://download.opensuse.org/repositories/home:/eumel_8/Debian_7.0/amd64/bsmtp_1.02_amd64.deb
-RUN wget --content-disposition "https://packagecloud.io/eumel8/gnuu/packages/ubuntu/focal/bsmtp_1.02_amd64.deb/download.deb?distro_version_id=210"
-RUN dpkg -i bsmtp_1.02_amd64.deb
+# Install UUCP for queue ownership and the Go bsmtp mailer.
+ARG UUCP_VERSION=1.07-27build1+go1.27.1
+ARG UUCP_SHA256=270cede7105858f4411dc0f2f6d3a6bf484bde322a9f3dfc392a5f84f25eafe0
+ARG BSMTP_VERSION=2.0.0-1
+ARG BSMTP_SHA256=f41f52aab2bcd5fd19e44923882ec0ab9be51736a3483ec484b0dbd5e3738a7b
+RUN set -eu; \
+    curl -fL --retry 3 "https://github.com/gnuu-de/uucp/releases/download/v${UUCP_VERSION}/uucp-go_${UUCP_VERSION}_amd64.deb" -o /tmp/uucp.deb; \
+    curl -fL --retry 3 "https://github.com/gnuu-de/bsmtp/releases/download/v${BSMTP_VERSION}/bsmtp_${BSMTP_VERSION}_amd64.deb" -o /tmp/bsmtp.deb; \
+    echo "${UUCP_SHA256}  /tmp/uucp.deb" | sha256sum -c -; \
+    echo "${BSMTP_SHA256}  /tmp/bsmtp.deb" | sha256sum -c -; \
+    apt-get update && apt-get install -y --no-install-recommends /tmp/uucp.deb /tmp/bsmtp.deb; \
+    rm -f /tmp/uucp.deb /tmp/bsmtp.deb; rm -rf /var/lib/apt/lists/*
 
 # entrypoint start script
 COPY mail/postfix.sh /postfix.sh
 COPY mail/sqlgrey.sh /sqlgrey.sh
 
 # set permission and maildir
-RUN chown root:uucp /usr/sbin/bsmtp
-RUN chmod +s /usr/sbin/bsmtp
+# The Go bsmtp port drops privileges when invoked as root; no setuid bit.
 RUN mkdir -p /data/spool/bsmtp
 RUN rm -rf /var/spool/bsmtp
 RUN ln -s /data/spool/bsmtp /var/spool/bsmtp

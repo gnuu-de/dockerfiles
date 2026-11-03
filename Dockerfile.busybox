@@ -1,13 +1,11 @@
-FROM python:3.8.6-alpine
-#FROM python:alpine as latest
+FROM python:3.13-alpine3.22
 # Set Environment variables
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 
 # Add System Tools
-RUN apk add --update --no-cache curl jq git openssl unzip gettext bash pwgen grep heirloom-mailx bind-tools busybox-extras mysql-client && apk upgrade
+RUN apk add --no-cache curl jq git openssl unzip gettext bash pwgen grep mailx bind-tools busybox-extras mariadb-client
 # Add s3cmd
-RUN apk add --no-cache py-pip && pip install s3cmd
+RUN pip install --no-cache-dir s3cmd
 # Add kubectl
-RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x kubectl && mv kubectl /usr/local/bin/
-
+RUN curl -fsSL --retry 3 "https://dl.k8s.io/release/$(curl -fsSL https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" -o /usr/local/bin/kubectl && chmod +x /usr/local/bin/kubectl

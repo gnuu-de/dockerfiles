@@ -1,12 +1,11 @@
-FROM ubuntu:20.04
+FROM ubuntu:24.04
 #
 # Build UUCP server with lcrypt in container
 #
 ENV DEBIAN_FRONTEND=noninteractive
 RUN useradd --create-home builduser
-RUN sed -i '/deb-src/s/^# //' /etc/apt/sources.list
-RUN apt-get update && apt-get -y upgrade
-RUN apt-get install -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew vim-tiny bash curl wget git devscripts debhelper texinfo libpam-dev
+RUN sed -i 's/^Types: deb$/Types: deb deb-src/' /etc/apt/sources.list.d/ubuntu.sources
+RUN apt-get update && apt-get install -y --no-install-recommends vim-tiny bash ca-certificates curl wget git devscripts debhelper texinfo libpam0g-dev
 
 USER builduser
 WORKDIR /home/builduser
@@ -24,4 +23,3 @@ WORKDIR /home/builduser/uucp-1.07
 #CMD dpkg-buildpackage -b
 #CMD debuild -us -uc
 CMD [ "tail", "-f", "/dev/null" ]
-
