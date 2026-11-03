@@ -13,7 +13,7 @@ COPY aio/entrypoint.sh /entrypoint.sh
 
 # Upgrade system & install packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    vim-tiny bash ca-certificates curl wget git inn2 rsyslog rmail bsd-mailx \
+    vim-tiny bash ca-certificates curl wget git inn2 rsyslog bsd-mailx \
     xinetd cu gettext-base bind9-host cron shellinabox alpine telnet postfix \
     libpam0g libcrypt1 adduser && rm -rf /var/lib/apt/lists/*
 

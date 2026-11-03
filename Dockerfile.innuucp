@@ -23,7 +23,7 @@ COPY news/gnuu.cron /etc/cron.d/gnuu.cron
 
 # uograde system & install packages for news and uucp
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    vim-tiny bash ca-certificates curl wget git inn2 rsyslog rmail bsd-mailx \
+    vim-tiny bash ca-certificates curl wget git inn2 rsyslog bsd-mailx \
     xinetd cu gettext-base bind9-host cron postfix postfix-mysql \
     libpam0g libcrypt1 adduser && rm -rf /var/lib/apt/lists/*
 

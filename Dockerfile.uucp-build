@@ -5,7 +5,7 @@ FROM ubuntu:24.04
 ENV DEBIAN_FRONTEND=noninteractive
 RUN useradd --create-home builduser
 RUN sed -i 's/^Types: deb$/Types: deb deb-src/' /etc/apt/sources.list.d/ubuntu.sources
-RUN apt-get update && apt-get install -y --no-install-recommends vim-tiny bash ca-certificates curl wget git devscripts debhelper texinfo libpam0g-dev && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends vim-tiny bash ca-certificates curl wget git devscripts debhelper texinfo libpam0g-dev
 
 USER builduser
 WORKDIR /home/builduser

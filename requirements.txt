@@ -4,7 +4,7 @@ Flask-MySQLdb>=2,<3
 gunicorn>=23,<25
 waitress>=3,<4
 # Webhooks and Matrix
-dockerhub-webhook
+# dockerhub-webhook 0.2.1 requires Flask 0.12 and cannot run with Flask 3.
 markdown
 matrix-nio
 # Input validation and email
