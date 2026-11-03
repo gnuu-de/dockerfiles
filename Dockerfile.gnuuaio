@@ -7,15 +7,15 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV TERM=linux
 
 # inn requires a config file with domain name instead FWDN in container (which is often not set)
+COPY aio/inn.conf /etc/news/inn.conf
 # entrypoint with program starts
 COPY aio/entrypoint.sh /entrypoint.sh
 
 # Upgrade system & install packages
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y --no-install-recommends -o Dpkg::Options::=--force-confold \
     vim-tiny bash ca-certificates curl wget git inn2 rsyslog bsd-mailx \
     xinetd cu gettext-base bind9-host cron shellinabox alpine telnet postfix \
     libpam0g libcrypt1 adduser && rm -rf /var/lib/apt/lists/*
-COPY aio/inn.conf /etc/news/inn.conf
 
 # Add kubectl
 RUN curl -fsSL --retry 3 "https://dl.k8s.io/release/$(curl -fsSL https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" -o /usr/local/bin/kubectl && chmod +x /usr/local/bin/kubectl
