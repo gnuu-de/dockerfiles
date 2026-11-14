@@ -8,6 +8,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     bsd-mailx gettext-base bind9-host sqlgrey libdbd-mysql-perl adduser \
     && rm -rf /var/lib/apt/lists/*
 
+# Keep the postfix uid/gid stable across base image upgrades. The 2.x images
+# (Ubuntu 20.04) used uid 101/gid 102, and existing queue data under
+# /data/spool/postfix is owned by that uid. On Ubuntu 24.04 the sqlgrey user
+# claims uid 101 first, which would move postfix to uid 100 and make
+# "postfix check" fail on existing volumes.
+RUN usermod -u 102 sqlgrey && \
+    usermod -u 101 postfix && \
+    chown -R postfix:postfix /var/spool/postfix /var/lib/postfix
+
 # Install UUCP for queue ownership and the Go bsmtp mailer.
 ARG UUCP_VERSION=1.07-27build1+go1.27.1
 ARG UUCP_SHA256=270cede7105858f4411dc0f2f6d3a6bf484bde322a9f3dfc392a5f84f25eafe0
