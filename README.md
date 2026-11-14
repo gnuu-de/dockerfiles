@@ -27,8 +27,8 @@ Dockerfile.python     | Python Container for Flask and Kubernetes Jobs
 
 Images are built in [GitHub Actions](https://github.com/gnuu-de/dockerfiles/actions)
 on pushes to `v2`, pull requests against `v2`, and version tags. Published
-images use the `v2` tag on this branch and are signed by digest with Cosign
-keyless GitHub OIDC identities. Pull requests build without publishing.
+images use the `v2` tag on this branch and are signed by digest with the
+project's Cosign key. Pull requests build without publishing.
 
 The interactive `linux` account in `gnuuaio` uses UID/GID 2000; Ubuntu's INN
 package occupies UID/GID 1000. Match the home-directory volume ownership to
@@ -36,10 +36,18 @@ UID/GID 2000 when deploying that image.
 
 ref: https://github.com/marketplace/actions/build-and-push-docker-images
 
-Elements image is mirrored:
+Third-party images that have no Dockerfile here are mirrored to ghcr.io and
+signed with the same Cosign key. This is required because the cosignwebhook
+only admits images signed by that key; a plain mirrored image is not enough.
 
-```bash
-docker pull docker.io/vectorim/element-web:v1.11.25
-docker tag docker.io/vectorim/element-web:v1.11.25 ghcr.io/gnuu-de/element-web:v1.11.25
-docker push ghcr.io/gnuu-de/element-web:v1.11.25
-```
+Use the `Mirror and sign image` workflow (`.github/workflows/mirror-sign.yml`)
+via *Actions* → *Run workflow*:
+
+- `source`: source image including tag, e.g.
+  `docker.io/vectorim/element-web:v1.12.35`
+- `destination`: destination image including tag, e.g.
+  `ghcr.io/gnuu-de/element-web:v1.12.35`
+
+The workflow copies the manifest list with `docker buildx imagetools create`
+(keeping all architectures of the source), resolves the destination digest and
+signs it with `COSIGN_PRIVATE_KEY`. No local Docker or Cosign setup is needed.
