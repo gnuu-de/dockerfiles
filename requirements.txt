@@ -10,6 +10,8 @@ matrix-nio
 # Input validation and email
 marshmallow
 Flask-Mail
+# HTTP client used by the user/admin apps
+requests
 # Prometheus
 prometheus-client
 flask-prometheus
