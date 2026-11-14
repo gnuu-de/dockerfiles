@@ -27,6 +27,18 @@ RUN apt-get update && apt-get install -y --no-install-recommends -o Dpkg::Option
     xinetd cu gettext-base bind9-host cron postfix postfix-mysql \
     libpam0g libcrypt1 adduser && rm -rf /var/lib/apt/lists/*
 
+# Keep the postfix uid/gid stable across base image upgrades. The 2.x images
+# (Ubuntu 20.04) used uid 102/gid 105 for postfix and gid 106 for postdrop;
+# existing queue data under /data/spool/postfix-out is owned by those ids. On
+# Ubuntu 24.04 postfix ends up as uid 101/gid 103, which makes "postfix check"
+# fail on existing volumes.
+RUN groupmod -g 105 postfix && \
+    groupmod -g 106 postdrop && \
+    usermod -u 102 -g 105 postfix && \
+    chgrp postdrop /usr/sbin/postdrop /usr/sbin/postqueue && \
+    chmod 2755 /usr/sbin/postdrop /usr/sbin/postqueue && \
+    chown -R postfix:postfix /var/lib/postfix
+
 # Part: Syslog
 # deactivate kernel log in container for rsyslog
 RUN sed -i '/imklog/s/^module/# /' /etc/rsyslog.conf
