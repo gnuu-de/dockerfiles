@@ -20,20 +20,49 @@ jobs:
     steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      - name: Login to GHCR
+      - name: Detect destination PAT
+        id: pat
+        env:
+          DEST_PASSWORD: ${{ secrets.DEST_PASSWORD }}
+        run: |
+          if [ -n "$DEST_PASSWORD" ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Login to GHCR with GITHUB_TOKEN
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          # The existing element-web package is not linked to this repository,
-          # so GITHUB_TOKEN gets a 403 on blob upload. Prefer the PAT used by
-          # the dockerhub-mirror workflow and fall back to GITHUB_TOKEN for
-          # packages that are linked to this repository.
-          username: ${{ secrets.DEST_PASSWORD != '' && secrets.DEST_USERNAME || github.actor }}
-          password: ${{ secrets.DEST_PASSWORD != '' && secrets.DEST_PASSWORD || secrets.GITHUB_TOKEN }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       # imagetools copies the full manifest list, so a multi-arch source stays
       # multi-arch. No local docker pull/build is involved.
-      - name: Mirror ${{ inputs.source }} to ${{ inputs.destination }}
+      # GITHUB_TOKEN only works when the package is linked to this repository or
+      # granted write access under "Manage Actions access".
+      - name: Mirror with GITHUB_TOKEN
+        id: mirror-token
+        continue-on-error: true
         run: docker buildx imagetools create --tag "${{ inputs.destination }}" "${{ inputs.source }}"
+      # Fall back to the PAT used by the dockerhub-mirror workflow. Needed when
+      # the package already exists but is not linked to this repository.
+      - name: Login to GHCR with PAT
+        if: steps.mirror-token.outcome == 'failure' && steps.pat.outputs.available == 'true'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.DEST_USERNAME }}
+          password: ${{ secrets.DEST_PASSWORD }}
+      - name: Mirror with PAT
+        if: steps.mirror-token.outcome == 'failure' && steps.pat.outputs.available == 'true'
+        run: docker buildx imagetools create --tag "${{ inputs.destination }}" "${{ inputs.source }}"
+      - name: Explain permission failure
+        if: steps.mirror-token.outcome == 'failure' && steps.pat.outputs.available == 'false'
+        run: |
+          echo "::error::GITHUB_TOKEN may not write to ${{ inputs.destination }} and no PAT is configured."
+          echo "Grant Write access to this repository under the package settings"
+          echo "(Package -> Settings -> Manage Actions access) or set DEST_USERNAME/DEST_PASSWORD."
+          exit 1
       - name: Resolve destination digest
         id: digest
         run: |
