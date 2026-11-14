@@ -24,8 +24,12 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          # The existing element-web package is not linked to this repository,
+          # so GITHUB_TOKEN gets a 403 on blob upload. Prefer the PAT used by
+          # the dockerhub-mirror workflow and fall back to GITHUB_TOKEN for
+          # packages that are linked to this repository.
+          username: ${{ secrets.DEST_PASSWORD != '' && secrets.DEST_USERNAME || github.actor }}
+          password: ${{ secrets.DEST_PASSWORD != '' && secrets.DEST_PASSWORD || secrets.GITHUB_TOKEN }}
       # imagetools copies the full manifest list, so a multi-arch source stays
       # multi-arch. No local docker pull/build is involved.
       - name: Mirror ${{ inputs.source }} to ${{ inputs.destination }}
