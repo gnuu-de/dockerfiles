@@ -1,4 +1,5 @@
-FROM python:3.13-slim-bookworm
+# Python 3.13 removed the stdlib "crypt" module, which gnuu-de/apps still uses.
+FROM python:3.12-slim-bookworm
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends vim-tiny net-tools default-mysql-client gcc default-libmysqlclient-dev pkg-config libssl-dev git curl ca-certificates && rm -rf /var/lib/apt/lists/*
