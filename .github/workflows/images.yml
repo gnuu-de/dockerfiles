@@ -75,9 +75,20 @@ jobs:
       - name: Install Cosign
         if: github.event_name != 'pull_request'
         uses: sigstore/cosign-installer@v4.1.2
+        with:
+          # Keep in sync with the cosign version used by the cosignwebhook verifier.
+          cosign-release: 'v3.0.6'
       - name: Sign pushed image by digest
         if: github.event_name != 'pull_request'
         env:
           IMAGE: ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}
           DIGEST: ${{ steps.build.outputs.digest }}
-        run: cosign sign --yes "${IMAGE}@${DIGEST}"
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          # The current key has an empty passphrase. The variable must still be
+          # set, otherwise cosign v3 tries to prompt on a non-interactive runner.
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+        # Key-based signing (not keyless): the cosignwebhook verifies against the
+        # static public key in COSIGNPUBKEY and rejects Fulcio certificates.
+        # --tlog-upload=false is not supported by cosign v3 with the default
+        # signing config; the webhook ignores the transparency log anyway.
+        run: cosign sign --yes --key env://COSIGN_PRIVATE_KEY "${IMAGE}@${DIGEST}"
