@@ -14,5 +14,19 @@ fi
 xinetd  -pidfile /run/xinetd.pid -f /xinetd.conf
 # postfix-out for uucp mail out
 postfix start
-# inn news service runs in foreground
-/usr/lib/news/bin/rc.news
+# inn news service runs as user news
+su news -s /bin/sh -c '/usr/lib/news/bin/rc.news' || exit 1
+
+# keep the container alive while innd is running
+i=0
+while [ "$i" -lt 30 ]; do
+    innd_pid=$(cat /run/news/innd.pid 2>/dev/null)
+    [ -n "$innd_pid" ] && break
+    sleep 1
+    i=$((i + 1))
+done
+if [ -n "$innd_pid" ]; then
+    while kill -0 "$innd_pid" 2>/dev/null; do
+        sleep 5
+    done
+fi
