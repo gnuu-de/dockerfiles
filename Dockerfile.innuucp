@@ -24,7 +24,7 @@ COPY news/gnuu.cron /etc/cron.d/gnuu.cron
 # uograde system & install packages for news and uucp
 RUN apt-get update && apt-get install -y --no-install-recommends -o Dpkg::Options::=--force-confold \
     vim-tiny bash ca-certificates curl wget git inn2 rsyslog bsd-mailx \
-    xinetd cu gettext-base bind9-host cron postfix postfix-mysql \
+    xinetd gettext-base bind9-host cron postfix postfix-mysql \
     libpam0g libcrypt1 adduser && rm -rf /var/lib/apt/lists/*
 
 # Keep the postfix uid/gid stable across base image upgrades. The 2.x images
@@ -84,10 +84,20 @@ RUN set -eu; \
     echo "${BSMTP_SHA256}  /tmp/bsmtp.deb" | sha256sum -c -; \
     apt-get update && apt-get install -y --no-install-recommends /tmp/uucp.deb /tmp/bsmtp.deb; \
     rm -f /tmp/uucp.deb /tmp/bsmtp.deb; rm -rf /var/lib/apt/lists/*
-#
-# install szip program
-RUN wget https://www.gnuu.de/repo/szip
-RUN chmod +x szip && mv szip /usr/local/bin/szip
+
+# Install cu (Go port) and szip (Go port) from the development releases.
+ARG CU_VERSION=0.1.0.ci.2
+ARG CU_SHA256=3080e1e7f489ab020a7f7a6f082b86188236bf5d1ba95f89be30960f5f5fdd9d
+ARG SZIP_VERSION=1.12.0
+ARG SZIP_SHA256=21f0c187bf1e775d072c395f78d8df320bb29f7cacf9cff707d99a3b6446bc0c
+RUN set -eu; \
+    curl -fL --retry 3 "https://github.com/gnuu-de/cu/releases/download/development/cu-go_${CU_VERSION}_amd64.deb" -o /tmp/cu-go.deb; \
+    curl -fL --retry 3 "https://github.com/gnuu-de/szip/releases/download/development/szip_${SZIP_VERSION}_amd64.deb" -o /tmp/szip.deb; \
+    echo "${CU_SHA256}  /tmp/cu-go.deb" | sha256sum -c -; \
+    echo "${SZIP_SHA256}  /tmp/szip.deb" | sha256sum -c -; \
+    apt-get update && apt-get install -y --no-install-recommends /tmp/cu-go.deb /tmp/szip.deb; \
+    rm -f /tmp/cu-go.deb /tmp/szip.deb; rm -rf /var/lib/apt/lists/*
+
 # set symlink to volume
 RUN rm -rf /var/spool/bsmtp
 RUN mkdir -p /data/spool/bsmtp
