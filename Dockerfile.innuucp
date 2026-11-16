@@ -27,6 +27,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends -o Dpkg::Option
     xinetd bzip2 gettext-base bind9-host cron postfix postfix-mysql \
     libpam0g libcrypt1 adduser && rm -rf /var/lib/apt/lists/*
 
+# Allow rsyslogd (syslog user) to write its error log in the news log dir.
+RUN chown news:syslog /var/log/news && chmod 775 /var/log/news
+
 # Keep the postfix uid/gid stable across base image upgrades. The 2.x images
 # (Ubuntu 20.04) used uid 102/gid 105 for postfix and gid 106 for postdrop;
 # existing queue data under /data/spool/postfix-out is owned by those ids. On
