@@ -118,6 +118,8 @@ RUN chsh uucp -s /bin/bash
 # set maildir (the Go bsmtp binary intentionally has no setuid bit)
 # Drop the postfix rsyslog socket config; postfix logs via maillog_file=/dev/stdout.
 RUN rm -f /etc/rsyslog.d/postfix.conf
+# Drop the news rsyslog config; INN writes its own logs to /data/log/news/.
+RUN rm -f /etc/rsyslog.d/news.conf
 
 # postfix conf for outgoing mail from uucp
 RUN rm -rf /var/spool/postfix && ln -s /data/spool/postfix-out /var/spool/postfix
